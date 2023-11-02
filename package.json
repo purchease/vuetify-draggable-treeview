@@ -3,7 +3,7 @@
   "version": "0.0.6",
   "description": "draggable v-treeview component",
   "main": "dist/v-draggable-treeview.umd.js",
-  "module": "dist/v-draggable-treeview.esm.js",
+  "module": "src/index.js",
   "unpkg": "dist/v-draggable-treeview.unpkg.js",
   "repository": "https://github.com/suusan2go/vuetify-draggable-treeview.git",
   "author": "suusan2go <ksuzuki180@gmail.com>",

@@ -8,20 +8,23 @@
     @input="updateValue"
   >
     <draggable-tree-view-node
-      v-for="item in value"
-      :key="item.id"
+      v-for="node in value"
+      :key="node.id"
       :group="group"
-      :value="item"
+      :value="node"
       :expand-icon="expandIcon"
+      :open-node-ids="openNodeIds"
+      :selected-node-ids="selectedNodeIds"
       @input="updateItem"
+      @toggle="updateSelectedNodeIds"
     >
-      <template v-slot:prepend="{ item, open }">
+      <template #prepend="{ item, open }">
         <slot name="prepend" v-bind="{ item, open }"> </slot>
       </template>
-      <template v-slot:label="{ item, open }">
+      <template #label="{ item, open }">
         <slot name="label" v-bind="{ item, open }"> </slot>
       </template>
-      <template v-slot:append="{ item, open }">
+      <template #append="{ item, open }">
         <slot name="append" v-bind="{ item, open }"> </slot>
       </template>
     </draggable-tree-view-node>
@@ -32,6 +35,9 @@
 import Vue, { PropType } from "vue";
 import draggable from "vuedraggable";
 import DraggableTreeViewNode from "./DraggableTreeviewNode.vue";
+
+import { PropValidator } from "vue/types/options";
+type NodeArray = (string | number)[];
 
 export default Vue.extend({
   components: {
@@ -53,31 +59,54 @@ export default Vue.extend({
       type: String,
       default: "mdi-menu-down",
     },
+    openNodeIds: {
+      type: Array,
+      default: () => [],
+    } as PropValidator<NodeArray>,
+    selectedNodeIds: {
+      type: Array,
+      default: () => [],
+    } as PropValidator<NodeArray>,
   },
   data() {
     return {
       localValue: [...this.value],
+      multiple: false,
     };
   },
   computed: {
     themeClassName(): string {
-      return this.$vuetify.theme.isDark ? "theme--dark" : "theme--light";
+      return this.$vuetify.theme.dark ? "theme--dark" : "theme--light";
     },
   },
   watch: {
-    value(value) {
+    value(value): void {
       this.localValue = [...value];
     },
   },
   methods: {
-    updateValue(value): void {
+    updateValue(value: any): void {
       this.localValue = value;
       this.$emit("input", this.localValue);
     },
-    updateItem(itemValue): void {
+    updateItem(itemValue: any): void {
       const index = this.localValue.findIndex((v) => v.id === itemValue.id);
       this.$set(this.localValue, index, itemValue);
       this.$emit("input", this.localValue);
+    },
+    updateSelectedNodeIds(nodeId: string | number): void {
+      const index = this.selectedNodeIds.findIndex((id) => id === nodeId);
+      if (index === -1) {
+        this.$emit(
+          "update:selected-node-ids",
+          this.multiple ? this.selectedNodeIds.concat([nodeId]) : [nodeId]
+        );
+      } else {
+        this.$emit(
+          "update:selected-node-ids",
+          this.selectedNodeIds.concat().splice(index, 1)
+        );
+      }
     },
   },
 });

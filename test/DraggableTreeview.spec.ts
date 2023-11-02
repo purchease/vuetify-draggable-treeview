@@ -10,7 +10,7 @@ describe("DraggableTreeview", () => {
         mocks: {
           $vuetify: {
             theme: {
-              isDark: false,
+              dark: false,
             },
           },
         },
@@ -44,7 +44,7 @@ describe("DraggableTreeview", () => {
         mocks: {
           $vuetify: {
             theme: {
-              isDark: false,
+              dark: false,
             },
           },
         },
